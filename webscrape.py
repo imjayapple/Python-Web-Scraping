@@ -32,3 +32,40 @@ if response.status_code == 200:
         print('-' * 80)
 else:
     print(f"Failed to fetch the page. Status code: {response.status_code}")
+
+# title, paragraph, and link scraper
+
+html_string = '''
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Web Page</title>
+</head>
+<body>
+    <h1>Welcome to my web page</h1>
+    <p>This is an example paragraph.</p>
+    <ul>
+        <li><a href="https://www.example1.com">Example 1</a></li>
+        <li><a href="https://www.example2.com">Example 2</a></li>
+    </ul>
+</body>
+</html>
+'''
+
+# parse the HTML string using Beautiful Soup
+soup = BeautifulSoup(html_string, 'html.parser')
+
+# extract the title of the webpage
+title = soup.title.text
+print(f'Title: {title}')
+
+# extract the text of the first paragraph
+paragraph = soup.p.text
+print(f'Paragraph: {paragraph}')
+
+# extract the links and their text 
+links = soup.find_all('a')
+for link in links:
+    link_text = link.text
+    link_url = link['href']
+    print(f'Link text: {link_text}, Link URL: {link_url}')

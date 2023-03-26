@@ -69,3 +69,44 @@ for link in links:
     link_text = link.text
     link_url = link['href']
     print(f'Link text: {link_text}, Link URL: {link_url}')
+
+# webscraping practice
+
+url = "https://books.toscrape.com/catalogue/category/books/programming_5/index.html"
+
+# send an HTTP GET request to the URL and get the content
+response = requests.get(url)
+
+# check if the request was successful (status code 200)
+if response.status_code == 200:
+    # parse the HTML content of the response
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    # find the book elements on the page
+    books = soup.find_all("article", class_="product_pod")
+
+    # limit to the top 10 books
+    top_books = books[:10]
+
+    # iterate through the top books and extract the title and author
+    for book in top_books:
+        title_element = book.find("h3").find("a")
+        title = title_element["title"]
+
+        # get the book detail page link
+        detail_link = "https://books.toscrape.com/catalogue" + title_element["href"][8:]
+
+        # fetch the book detail page
+        detail_response = requests.get(detail_link)
+        detail_soup = BeautifulSoup(detail_response.text, "html.parser")
+
+        # get the author name from the detail page
+        author_element = detail_soup.find("table", class_="table table-striped").find_all("tr")[1].find("td")
+        author = author_element.text.strip()
+
+        # print the title and author
+        print(f"Title: {title}")
+        print(f"Author: {author}")
+        print("-" * 80)
+else:
+    print(f"Failed to fetch the page. Status code: {response.status_code}")
